@@ -33,11 +33,11 @@ class Config:
     SECRET_KEY = os.getenv("SECRET_KEY", "clave_por_defecto_cambiar_en_produccion")
       
     # MYSQL
-    MYSQL_HOST = os.getenv("MYSQL_HOST", "localhost")
-    MYSQL_PORT = int(os.getenv("MYSQL_PORT", 3306))
+    MYSQL_HOST = os.getenv("MYSQL_HOST", "thomas.proxy.rlwy.net")
+    MYSQL_PORT = int(os.getenv("MYSQL_PORT", 29331))
     MYSQL_USER = os.getenv("MYSQL_USER", "root")
     MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD", "")
-    MYSQL_DB = os.getenv("MYSQL_DB", "synapse_virtual_ia")
+    MYSQL_DB = os.getenv("MYSQL_DB", "railway")
     MYSQL_CHARSET = os.getenv("MYSQL_CHARSET", "utf8mb4")
     
     # SESIONES
