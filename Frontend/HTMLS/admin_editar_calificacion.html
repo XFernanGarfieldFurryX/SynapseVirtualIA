@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Calificación · Synapse Virtual IA{% endblock %}
+{% block page_title %}✏️ Editar Calificación{% endblock %}
+
+{% block content %}
+    <div style="max-width: 600px; margin: 0 auto;">
+        <div style="background: #0b1b6d; padding: 15px; border-radius: 12px; border: 1px solid #00d4ff; margin-bottom: 20px;">
+            <p><strong style="color:#ffffff;">Estudiante:</strong> <span style="color:#8a9bb5;">{{ calificacion.estudiante_nombre }}</span></p>
+            <p><strong style="color:#ffffff;">Materia:</strong> <span style="color:#8a9bb5;">{{ calificacion.materia_nombre }}</span></p>
+        </div>
+        <form method="POST" class="form-consulta">
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label style="color:#ffffff;">Lapso</label>
+                <select name="lapso" class="form-control" required style="width:100%; padding: 12px; border-radius: 30px; background: #1a1a2e; color: #fff; border: 2px solid #1f4e79;">
+                    {% for l in lapsos %}
+                        <option value="{{ l }}" {% if l == calificacion.lapso %}selected{% endif %}>{{ l }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label style="color:#ffffff;">Nota (0 - 20)</label>
+                <input type="number" name="nota" value="{{ calificacion.nota }}" step="0.1" min="0" max="20" required style="width:100%; padding: 12px; border-radius: 30px; background: #1a1a2e; color: #fff; border: 2px solid #1f4e79;">
+            </div>
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label style="color:#ffffff;">Observación (opcional)</label>
+                <input type="text" name="observacion" value="{{ calificacion.observacion or '' }}" placeholder="Observación de la calificación" style="width:100%; padding: 12px; border-radius: 30px; background: #1a1a2e; color: #fff; border: 2px solid #1f4e79;">
+            </div>
+            <button type="submit" class="btn-submit">Actualizar Calificación</button>
+            <a href="{{ url_for('admin.listar_calificaciones') }}" class="btn-volver" style="margin-left:10px;">Cancelar</a>
+        </form>
+    </div>
+{% endblock %}

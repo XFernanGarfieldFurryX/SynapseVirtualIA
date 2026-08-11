@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Administración · Synapse Virtual IA{% endblock %}
+{% block page_title %}🛠 Panel de Administración{% endblock %}
+
+{% block content %}
+    <p style="color:#8a9bb5; margin-bottom:20px;">Gestión del sistema, usuarios, tickets y configuración general.</p>
+
+    <!-- Tarjeta de Calificaciones (mejorada - AZUL consistente) -->
+    <a href="{{ url_for('admin.listar_calificaciones') }}" 
+       style="display: block; background: #0b1b6d; border: 2px solid #00d4ff; border-radius: 12px; padding: 20px 25px; margin-bottom: 25px; text-decoration: none; transition: all 0.3s ease; box-shadow: 0 0 15px rgba(0, 212, 255, 0.1);">
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px;">
+            <div style="display: flex; align-items: center; gap: 18px;">
+                <div style="background: #00d4ff; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #0b1b6d; font-size: 1.5rem; flex-shrink: 0;">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div>
+                    <h4 style="color: #ffffff; margin: 0; font-size: 1.1rem;">📊 Gestión de calificaciones por estudiantes y materias</h4>
+                    <p style="color: #8a9bb5; margin: 5px 0 0 0; font-size: 0.9rem;">Registrar, editar y eliminar notas académicas</p>
+                </div>
+            </div>
+            <div style="background: #00d4ff; color: #0b1b6d; padding: 8px 18px; border-radius: 30px; font-weight: bold; font-size: 0.9rem;">
+                {{ stats.total_calificaciones if stats else 0 }} registradas
+            </div>
+        </div>
+    </a>
+
+    <!-- Estadísticas -->
+    <section class="stats-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:15px; margin-bottom:25px;">
+        <div class="stat-card" style="text-align:center; padding:15px;">
+            <span class="stat-number">{{ stats.total_usuarios if stats else 0 }}</span>
+            <span class="stat-label">Usuarios registrados</span>
+        </div>
+        <div class="stat-card" style="text-align:center; padding:15px;">
+            <span class="stat-number">{{ stats.tickets_abiertos if stats else 0 }}</span>
+            <span class="stat-label">Tickets abiertos</span>
+        </div>
+        <div class="stat-card" style="text-align:center; padding:15px;">
+            <span class="stat-number">{{ stats.tickets_cerrados if stats else 0 }}</span>
+            <span class="stat-label">Tickets cerrados</span>
+        </div>
+        <div class="stat-card" style="text-align:center; padding:15px;">
+            <span class="stat-number">{{ stats.total_calificaciones if stats else 0 }}</span>
+            <span class="stat-label">Calificaciones</span>
+        </div>
+    </section>
+
+    <!-- Acciones rápidas -->
+    <div style="display:flex; flex-wrap:wrap; gap:15px; margin-bottom:25px;">
+        <a href="{{ url_for('admin.listar_usuarios') }}" class="btn-submit"><i class="fas fa-users"></i> Gestionar Usuarios</a>
+        <a href="{{ url_for('admin.listar_tickets') }}" class="btn-submit"><i class="fas fa-ticket-alt"></i> Gestionar Tickets</a>
+        <a href="{{ url_for('admin.auditoria') }}" class="btn-volver"><i class="fas fa-history"></i> Ver Auditoría</a>
+    </div>
+
+    <!-- Formulario consulta -->
+    <form method="POST" class="form-consulta">
+        <h3 style="color:#ffffff; margin-bottom:10px;">📌 Consulta administrativa</h3>
+        <input type="text" name="pregunta" placeholder="Consulta administrativa..." required>
+        <button type="submit" class="btn-submit">Consultar</button>
+    </form>
+
+    {% if respuesta %}
+        <div class="respuesta" style="margin-top:20px;">
+            <h3 style="color:#00d4ff;">📌 Respuesta:</h3>
+            <p style="color:#ffffff;">{{ respuesta }}</p>
+        </div>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperar Contraseña · Synapse Virtual IA</title>
+    
+    <!-- Tu CSS de Flask -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+    
+    <!-- ESTILOS OSCUROS Y AZULES (Forzados igual que el login) -->
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        /* Fondo Negro general */
+        body {
+            background-color: #000000 !important;
+            color: #ffffff !important;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+
+        /* Tarjeta central - Azul oscuro con borde celeste */
+        .recover-card {
+            background-color: #0b1b6d !important;
+            padding: 40px 50px;
+            border-radius: 20px;
+            border: 2px solid #00d4ff;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Logo y Textos */
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .recover-card h1 {
+            color: #ffffff !important;
+            font-size: 24px;
+            margin: 0;
+        }
+        .recover-card h2 {
+            color: #ffffff !important;
+            font-size: 22px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* Mensajes Flash (El aviso amarillo ahora estilizado para modo oscuro) */
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+        .flash {
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            border: 1px solid #00d4ff;
+            background-color: #1f4e79 !important; /* Azul oscuro suave */
+            color: #ffffff !important;
+        }
+
+        /* Inputs y Etiquetas */
+        .form-recover {
+            width: 100%;
+        }
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 14px 15px;
+            border-radius: 10px;
+            border: 1px solid #1f4e79;
+            background-color: #1a1a2e !important;
+            color: #ffffff !important;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s;
+        }
+        .form-group input:focus {
+            border-color: #00d4ff;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+        }
+        .form-group input::placeholder {
+            color: #8a9bb5;
+        }
+
+        /* Botón de "Enviar código" */
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #00d4ff;
+            border-radius: 10px;
+            background-color: #0b1b6d !important;
+            color: #ffffff !important;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 5px;
+        }
+        .btn-submit:hover {
+            background-color: #00d4ff !important;
+            color: #000000 !important;
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+        }
+
+        /* Link de "Volver al login" */
+        .back-link {
+            display: block;
+            margin-top: 25px;
+            color: #00d4ff !important;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer (Pie de página) */
+        .footer-recover {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 13px;
+            color: #ffffff !important;
+            border-top: 1px solid #0b1b6d;
+            padding-top: 20px;
+            width: 100%;
+            max-width: 450px;
+        }
+        .footer-recover p {
+            color: #ffffff !important;
+        }
+        
+        @media (max-width: 500px) {
+            .recover-card { padding: 30px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Tarjeta de Recuperación -->
+    <div class="recover-card">
+        
+        <!-- Logo SVG (El que ya funcionó antes) -->
+        <div class="logo-container">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="45" height="45">
+                <circle cx="100" cy="100" r="100" fill="#0b1b6d" />
+                <text x="100" y="125" font-family="Arial" font-size="72" font-weight="bold" fill="white" text-anchor="middle">Sy</text>
+            </svg>
+            <h1>Synapse Virtual IA</h1>
+        </div>
+        
+        <h2>Recuperar Contraseña</h2>
+
+        <!-- Mensajes Flash (Estilizados en modo oscuro) -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Formulario -->
+        <!-- ✅ CORREGIDO: action vacío (usa la misma ruta) y link a auth.login -->
+        <form action="" method="POST" class="form-recover">
+            <div class="form-group">
+                <input type="email" name="usuario" placeholder="Tu correo electrónico" required>
+            </div>
+            <button type="submit" class="btn-submit">Enviar código</button>
+            <a href="{{ url_for('auth.login') }}" class="back-link">Volver al login</a>
+        </form>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer-recover">
+        <p>Synapse Virtual IA · Todos los derechos reservados</p>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,319 @@
+{% extends "base.html" %}
+
+{% block title %}Asistente IA · Synapse Virtual IA{% endblock %}
+{% block page_title %}🤖 Asistente Virtual Synapse IA{% endblock %}
+
+{% block content %}
+<style>
+    /* ===== CHAT CONTAINER ===== */
+    .chat-container {
+        background: #0b1b6d;
+        border: 1px solid #00d4ff;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        max-height: 450px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    .chat-container::-webkit-scrollbar {
+        width: 6px;
+    }
+    .chat-container::-webkit-scrollbar-thumb {
+        background: #00d4ff;
+        border-radius: 10px;
+    }
+
+    /* ===== MENSAJES ===== */
+    .mensaje {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        animation: fadeIn 0.3s ease;
+    }
+    .mensaje.usuario {
+        flex-direction: row-reverse;
+    }
+    .mensaje.usuario .bubble {
+        background: #00d4ff;
+        color: #0b1b6d;
+        border-radius: 12px 12px 4px 12px;
+    }
+    .mensaje.bot .bubble {
+        background: #1a1a2e;
+        color: #ffffff;
+        border-radius: 12px 12px 12px 4px;
+        border: 1px solid #1f4e79;
+    }
+    .bubble {
+        max-width: 75%;
+        padding: 12px 18px;
+        word-wrap: break-word;
+        line-height: 1.5;
+    }
+    .avatar-chat {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 1.2rem;
+    }
+    .avatar-chat.bot {
+        background: #00d4ff;
+        color: #0b1b6d;
+    }
+    .avatar-chat.user {
+        background: #1f4e79;
+        color: #ffffff;
+    }
+
+    /* ===== INDICADOR DE ESCRITURA ===== */
+    .typing {
+        display: none;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 0;
+        color: #8a9bb5;
+        font-size: 0.9rem;
+    }
+    .typing.active {
+        display: flex;
+    }
+    .typing .dots span {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #00d4ff;
+        margin: 0 2px;
+        animation: bounce 1.4s infinite both;
+    }
+    .typing .dots span:nth-child(2) { animation-delay: 0.2s; }
+    .typing .dots span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes bounce {
+        0%, 80%, 100% { transform: scale(0); }
+        40% { transform: scale(1); }
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===== COMANDOS RÁPIDOS ===== */
+    .comandos-rapidos {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 10px 0 15px;
+    }
+    .comando-chip {
+        background: #1a1a2e;
+        border: 1px solid #1f4e79;
+        color: #8a9bb5;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.25s;
+    }
+    .comando-chip:hover {
+        background: #00d4ff;
+        color: #0b1b6d;
+        border-color: #00d4ff;
+        transform: translateY(-2px);
+    }
+
+    /* ===== ACCESO A GEMINI EXTERNO ===== */
+    .gemini-link {
+        margin-top: 15px;
+        text-align: center;
+        padding: 12px;
+        background: #1a1a2e;
+        border-radius: 12px;
+        border: 1px solid #1f4e79;
+    }
+    .gemini-link a {
+        color: #00d4ff;
+        text-decoration: none;
+        font-weight: 500;
+    }
+    .gemini-link a:hover {
+        text-decoration: underline;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 600px) {
+        .bubble { max-width: 90%; }
+        .comandos-rapidos { gap: 5px; }
+        .comando-chip { font-size: 0.75rem; padding: 4px 10px; }
+    }
+</style>
+
+<!-- ===== CHAT ===== -->
+<div class="chat-container" id="chatContainer">
+    <!-- Mensaje de bienvenida personalizado según el rol -->
+    <div class="mensaje bot">
+        <div class="avatar-chat bot"><i class="fas fa-robot"></i></div>
+        <div class="bubble">
+            <strong>¡Hola, {{ session.nombre }}! 👋</strong><br>
+            Soy Synapse IA, tu asistente virtual educativo.
+            {% if session.rol == 'admin' %}
+                <br>Puedes consultarme sobre gestión administrativa, reportes y estado del sistema.
+            {% elif session.rol == 'profesor' %}
+                <br>Puedes consultarme sobre notas, planificación y rendimiento de estudiantes.
+            {% elif session.rol == 'estudiante' %}
+                <br>Puedes consultarme sobre calificaciones, horarios y actividades.
+            {% elif session.rol == 'soporte' %}
+                <br>Puedes consultarme sobre problemas técnicos, tickets y equipos.
+            {% else %}
+                <br>Puedes preguntarme sobre cualquier tema educativo.
+            {% endif %}
+            <br><br>
+            <em style="color:#8a9bb5;">💡 También reconozco comandos como "ayuda", "fecha y hora" o "abre google".</em>
+        </div>
+    </div>
+
+    <!-- Respuesta previa (si existe) -->
+    {% if respuesta %}
+        <div class="mensaje bot" id="respuestaIA">
+            <div class="avatar-chat bot"><i class="fas fa-robot"></i></div>
+            <div class="bubble">{{ respuesta|safe }}</div>
+        </div>
+    {% endif %}
+
+    <!-- Indicador de escritura -->
+    <div class="typing" id="typingIndicator">
+        <span style="color:#00d4ff;">Synapse IA está pensando</span>
+        <span class="dots">
+            <span></span><span></span><span></span>
+        </span>
+    </div>
+</div>
+
+<!-- ===== FORMULARIO ===== -->
+<form method="POST" class="form-consulta" id="chatForm" style="margin-bottom:15px;">
+    <div style="display:flex; gap:10px;">
+        <input type="text" name="pregunta" id="preguntaInput" placeholder="Escribe tu consulta..." required style="flex:1;">
+        <button type="submit" class="btn-submit" id="enviarBtn">
+            <i class="fas fa-paper-plane"></i> Enviar
+        </button>
+    </div>
+</form>
+
+<!-- ===== COMANDOS RÁPIDOS POR ROL ===== -->
+<div style="margin-bottom:10px;">
+    <p style="color:#8a9bb5; font-size:0.9rem; margin-bottom:8px;">
+        <i class="fas fa-bolt" style="color:#00d4ff;"></i> 
+        <strong>Comandos rápidos</strong> (haz clic para autocompletar)
+    </p>
+    <div class="comandos-rapidos">
+        {% if session.rol == 'admin' %}
+            <span class="comando-chip" data-comando="asistencia del personal">📋 Asistencia personal</span>
+            <span class="comando-chip" data-comando="profesores presentes">👨‍🏫 Profesores presentes</span>
+            <span class="comando-chip" data-comando="ocupación de aulas">🏫 Ocupación de aulas</span>
+            <span class="comando-chip" data-comando="registro estudiantil">📝 Registro estudiantil</span>
+            <span class="comando-chip" data-comando="reporte administrativo">📊 Reporte administrativo</span>
+            <span class="comando-chip" data-comando="gestión financiera">💰 Gestión financiera</span>
+            <span class="comando-chip" data-comando="estado del sistema">⚙️ Estado del sistema</span>
+            <span class="comando-chip" data-comando="versión del sistema">📌 Versión</span>
+            <span class="comando-chip" data-comando="ayuda">❓ Ayuda</span>
+        {% elif session.rol == 'profesor' %}
+            <span class="comando-chip" data-comando="registrar notas">📝 Registrar notas</span>
+            <span class="comando-chip" data-comando="mis materias">📚 Mis materias</span>
+            <span class="comando-chip" data-comando="rendimiento de estudiantes">📊 Rendimiento</span>
+            <span class="comando-chip" data-comando="planificación de clases">📋 Planificación</span>
+            <span class="comando-chip" data-comando="ayuda">❓ Ayuda</span>
+        {% elif session.rol == 'estudiante' %}
+            <span class="comando-chip" data-comando="mis notas">📊 Mis notas</span>
+            <span class="comando-chip" data-comando="mi horario">📅 Mi horario</span>
+            <span class="comando-chip" data-comando="mis materias">📚 Mis materias</span>
+            <span class="comando-chip" data-comando="actividades pendientes">📝 Actividades</span>
+            <span class="comando-chip" data-comando="ayuda">❓ Ayuda</span>
+        {% elif session.rol == 'soporte' %}
+            <span class="comando-chip" data-comando="internet">🌐 Internet</span>
+            <span class="comando-chip" data-comando="impresora">🖨️ Impresora</span>
+            <span class="comando-chip" data-comando="computadora">💻 Computadora</span>
+            <span class="comando-chip" data-comando="proyector">📽️ Proyector</span>
+            <span class="comando-chip" data-comando="ticket">🎫 Ticket</span>
+            <span class="comando-chip" data-comando="ayuda">❓ Ayuda</span>
+        {% endif %}
+        <!-- Comandos comunes para todos -->
+        <span class="comando-chip" data-comando="fecha y hora">🕒 Fecha y hora</span>
+        <span class="comando-chip" data-comando="abre google">🌐 Abre Google</span>
+        <span class="comando-chip" data-comando="abre youtube">📺 Abre YouTube</span>
+    </div>
+</div>
+
+<!-- ===== ENLACE A GEMINI EXTERNO (OPCIONAL) ===== -->
+<div class="gemini-link">
+    <i class="fas fa-robot" style="color:#00d4ff;"></i>
+    <span style="color:#8a9bb5;">¿Quieres usar una IA más potente?</span>
+    <a href="https://gemini.google.com/" target="_blank">Prueba Google Gemini</a>
+</div>
+
+<!-- ===== SCRIPT PARA INTERACTIVIDAD ===== -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const chatContainer = document.getElementById('chatContainer');
+        function scrollChat() {
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+        scrollChat();
+
+        // Autocompletar comandos al hacer clic en un chip
+        document.querySelectorAll('.comando-chip').forEach(function(chip) {
+            chip.addEventListener('click', function() {
+                const comando = this.dataset.comando;
+                const input = document.getElementById('preguntaInput');
+                input.value = comando;
+                input.focus();
+            });
+        });
+
+        // Mostrar indicador de escritura al enviar
+        const form = document.getElementById('chatForm');
+        const typing = document.getElementById('typingIndicator');
+        const btn = document.getElementById('enviarBtn');
+        const input = document.getElementById('preguntaInput');
+
+        form.addEventListener('submit', function(e) {
+            const texto = input.value.trim();
+            if (!texto) {
+                e.preventDefault();
+                return;
+            }
+            const userMsg = document.createElement('div');
+            userMsg.className = 'mensaje usuario';
+            userMsg.innerHTML = `
+                <div class="avatar-chat user"><i class="fas fa-user"></i></div>
+                <div class="bubble">${escapeHtml(texto)}</div>
+            `;
+            chatContainer.appendChild(userMsg);
+            scrollChat();
+
+            typing.classList.add('active');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        });
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        if (document.getElementById('respuestaIA')) {
+            typing.classList.remove('active');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar';
+            scrollChat();
+        }
+    });
+</script>
+
+{% endblock %}

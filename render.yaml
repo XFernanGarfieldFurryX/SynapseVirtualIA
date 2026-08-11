@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: synapse-virtual-ia
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: SECRET_KEY
+        value: SYNAPSE_VIRTUAL_IA_2026_SECRET_KEY
+      # Aquí van las variables exactas que lee tu app.py
+      - key: MYSQL_HOST
+        value: zephyr.proxy.rlwy.net
+      - key: MYSQL_PORT
+        value: "13458"
+      - key: MYSQL_USER
+        value: root
+      - key: MYSQL_PASSWORD
+        value: "BJmwBrWfHRhbddiUzsZFwUWFAxQEUDNO"
+      - key: MYSQL_DB
+        value: railway
+      - key: PYTHON_VERSION
+        value: 3.10.12

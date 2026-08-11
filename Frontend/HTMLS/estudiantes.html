@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Estudiantes · Synapse Virtual IA{% endblock %}
+{% block page_title %}Asistente Estudiantil{% endblock %}
+
+{% block content %}
+    <p style="color:#8a9bb5; margin-bottom:20px;">Realiza consultas sobre tus calificaciones, horarios, actividades y rendimiento académico.</p>
+
+    <form method="POST" class="form-consulta">
+        <input type="text" name="pregunta" placeholder="Escribe tu pregunta" required>
+        <button type="submit" class="btn-submit">Consultar</button>
+    </form>
+
+    {% if respuesta %}
+        <div class="respuesta" style="margin-top:20px;">
+            <h3 style="color:#00d4ff;">📌 Respuesta:</h3>
+            <p style="color:#ffffff;">{{ respuesta }}</p>
+        </div>
+    {% endif %}
+
+    <div style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap;">
+        <span class="status">📊 Mis notas</span>
+        <span class="status">📅 Mi horario</span>
+        <span class="status">📚 Mis materias</span>
+        <span class="status">📝 Actividades pendientes</span>
+    </div>
+{% endblock %}

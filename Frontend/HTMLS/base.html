@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Synapse Virtual IA{% endblock %}</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%230b1b6d'/><text x='50' y='68' font-family='Arial' font-size='40' font-weight='bold' fill='white' text-anchor='middle'>Sy</text></svg>">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* ===== ESTILOS GLOBALES ===== */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: #000000 !important;
+            color: #ffffff !important;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+            flex: 1;
+        }
+        /* Sidebar */
+        .sidebar {
+            width: 240px;
+            background: #0b1b6d !important;
+            border-right: 2px solid #00d4ff;
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100%;
+            overflow-y: auto;
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+        .sidebar::-webkit-scrollbar { width: 4px; }
+        .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 10px; }
+        .logo-sidebar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 20px 30px 20px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #ffffff;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .logo-sidebar span { color: #ffffff; }
+        .nav-sidebar {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            padding: 0 10px;
+        }
+        .nav-sidebar a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            font-size: 0.95rem;
+            border-radius: 8px;
+            transition: all 0.25s ease;
+            border-left: 3px solid transparent;
+        }
+        .nav-sidebar a:hover {
+            background: rgba(255,255,255,0.08);
+            color: white;
+            transform: translateX(4px);
+        }
+        .nav-sidebar a.active {
+            background: rgba(255,255,255,0.12);
+            color: white;
+            border-left-color: #ffd700;
+        }
+        .nav-sidebar a i { width: 22px; text-align: center; }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 240px;
+            flex: 1;
+            padding: 20px 30px 30px 30px;
+            background: #000000 !important;
+            min-height: 100vh;
+        }
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+            background: #0b1b6d;
+            padding: 15px 25px;
+            border-radius: 12px;
+            border-bottom: 3px solid #00d4ff;
+        }
+        .top-bar h1 { color: #ffffff; font-size: 1.8rem; font-weight: 700; margin: 0; }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            color: #ffffff;
+        }
+        .user-info span { color: #ffffff; font-weight: 500; }
+        .avatar-whatsapp {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #00d4ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #ffffff;
+            color: #0b1b6d;
+            font-size: 1.4rem;
+            overflow: hidden;
+        }
+        .avatar-whatsapp i { margin: 0; }
+        .role-badge {
+            background: #00d4ff;
+            color: #0b1b6d;
+            font-size: 11px;
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 12px;
+            margin-left: 8px;
+            text-transform: uppercase;
+        }
+        .sidebar-toggle {
+            display: none;
+            background: #0b1b6d;
+            color: white;
+            border: 2px solid #00d4ff;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 101;
+        }
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 99;
+        }
+        .footer {
+            background: #000000;
+            color: #ffffff;
+            border-top: 1px solid #0b1b6d;
+            text-align: center;
+            padding: 15px;
+            margin-top: auto;
+        }
+        .footer p { color: #8a9bb5; font-size: 0.9rem; margin: 0; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); width: 280px; }
+            .sidebar.open { transform: translateX(0); }
+            .sidebar-overlay.active { display: block; }
+            .sidebar-toggle { display: block; }
+            .main-content { margin-left: 0; padding: 70px 15px 20px; }
+            .top-bar { flex-direction: column; text-align: center; padding: 15px; }
+            .top-bar h1 { font-size: 1.4rem; }
+        }
+        @media (max-width: 480px) {
+            .main-content { padding: 60px 10px 15px; }
+            .top-bar h1 { font-size: 1.2rem; }
+        }
+
+        /* ===== FLASH ===== */
+        .flash-messages { margin-bottom: 20px; }
+        .flash {
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-weight: 500;
+            animation: slideDown 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+        .flash.success { background: #1a3a2a; color: #7ddf9a; border-left-color: #28a745; }
+        .flash.danger { background: #3a1a1a; color: #f8a0a0; border-left-color: #dc3545; }
+        .flash.warning { background: #3a3a1a; color: #f0d080; border-left-color: #ffc107; }
+        .flash.info { background: #1a2a3a; color: #80c0f0; border-left-color: #17a2b8; }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== BOTONES ===== */
+        .btn-submit, .btn-volver, .btn-primary {
+            background: #0b1b6d;
+            color: white;
+            border: 2px solid #00d4ff;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-submit:hover, .btn-volver:hover, .btn-primary:hover {
+            background: #00d4ff;
+            color: #0b1b6d;
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+        }
+        .btn-volver { background: transparent; border-color: #00d4ff; color: #00d4ff; }
+        .btn-volver:hover { background: #00d4ff; color: #0b1b6d; }
+
+        /* ===== TARJETAS ===== */
+        .stat-card, .tarjeta, .respuesta, .login-card, .welcome-message {
+            background: #0b1b6d !important;
+            border: 1px solid #00d4ff;
+            border-radius: 12px;
+            padding: 20px 25px;
+            color: #ffffff !important;
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.1);
+            transition: all 0.25s ease;
+        }
+        .stat-card:hover, .tarjeta:hover { transform: translateY(-4px); box-shadow: 0 0 30px rgba(0, 212, 255, 0.2); }
+        .stat-card h3, .stat-card p { color: #ffffff !important; }
+        .stat-number { font-size: 2rem; font-weight: 700; color: #00d4ff !important; display: block; }
+        .stat-label { font-size: 0.9rem; color: #8a9bb5 !important; }
+
+        /* ===== FORMULARIOS ===== */
+        .form-consulta, .form-login {
+            background: #0b1b6d !important;
+            padding: 25px 30px;
+            border-radius: 12px;
+            border: 1px solid #00d4ff;
+        }
+        .form-consulta input, .form-login input, .form-control {
+            width: 100%;
+            padding: 12px 18px;
+            border: 2px solid #1f4e79;
+            border-radius: 30px;
+            font-size: 1rem;
+            background: #1a1a2e !important;
+            color: #ffffff !important;
+            transition: all 0.25s ease;
+        }
+        .form-consulta input:focus, .form-login input:focus, .form-control:focus {
+            border-color: #00d4ff;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.2);
+        }
+        .form-consulta input::placeholder, .form-login input::placeholder {
+            color: #8a9bb5;
+        }
+
+        /* ===== TABLAS ===== */
+        .table-container {
+            background: #0b1b6d !important;
+            border-radius: 12px;
+            border: 1px solid #00d4ff;
+            overflow-x: auto;
+        }
+        table { width: 100%; border-collapse: collapse; color: #ffffff; }
+        thead { background: #1a1a2e; }
+        th { padding: 14px 16px; text-align: left; font-weight: 600; color: #00d4ff; border-bottom: 2px solid #1f4e79; }
+        td { padding: 12px 16px; border-bottom: 1px solid #1a1a2e; }
+        tr:hover td { background: rgba(0, 212, 255, 0.05); }
+
+        /* ===== STATUS BADGES ===== */
+        .status {
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: inline-block;
+            text-transform: capitalize;
+        }
+        .status.abierto, .status.open { background: #1a2a3a; color: #80c0f0; }
+        .status.en.proceso, .status.processing { background: #3a3a1a; color: #f0d080; }
+        .status.cerrado, .status.completed { background: #1a3a2a; color: #7ddf9a; }
+        .status.admin { background: #2a1a3a; color: #c080f0; }
+        .status.profesor { background: #1a2a3a; color: #80c0f0; }
+        .status.estudiante { background: #1a3a2a; color: #7ddf9a; }
+        .status.soporte { background: #3a2a1a; color: #f0c080; }
+
+        /* ===== WELCOME ===== */
+        .welcome-message {
+            text-align: center;
+            padding: 50px 30px;
+        }
+        .welcome-message h2 { color: #ffffff; font-size: 2rem; }
+        .welcome-message p { color: #aacdff; font-size: 1.2rem; }
+        .welcome-message .btn-login {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 35px;
+            background: #00d4ff;
+            color: #0b1b6d;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .welcome-message .btn-login:hover {
+            background: #ffffff;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="logo-sidebar">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="45" height="45" style="vertical-align: middle; margin-right: 10px;">
+                    <circle cx="100" cy="100" r="100" fill="#0b1b6d" />
+                    <text x="100" y="125" font-family="Arial" font-size="72" font-weight="bold" fill="white" text-anchor="middle">Sy.IA</text>
+                </svg>
+                <span>Synapse IA</span>
+            </div>
+            <nav class="nav-sidebar">
+                {% if session and session.id %}
+                    <a href="{{ url_for('public.index') }}" class="{% if request.endpoint == 'public.index' %}active{% endif %}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                    <a href="{{ url_for('estudiante.lapsos') }}" class="{% if request.endpoint == 'estudiante.lapsos' %}active{% endif %}"><i class="fas fa-file-alt"></i> Calificaciones</a>
+                    <a href="{{ url_for('estudiante.actividades') }}" class="{% if request.endpoint == 'estudiante.actividades' %}active{% endif %}"><i class="fas fa-tasks"></i> Actividades</a>
+                    <a href="{{ url_for('ia.ia') }}" class="{% if request.endpoint == 'ia.ia' %}active{% endif %}">
+                        <i class="fas fa-robot"></i> Asistente IA
+                    </a>
+                    <a href="{{ url_for('docente.profesores') }}" class="{% if request.endpoint == 'docente.profesores' %}active{% endif %}"><i class="fas fa-chalkboard-teacher"></i> Profesores</a>
+                    <a href="{{ url_for('estudiante.estudiantes') }}" class="{% if request.endpoint == 'estudiante.estudiantes' %}active{% endif %}"><i class="fas fa-user-graduate"></i> Estudiantes</a>
+                    <a href="{{ url_for('soporte.soporte') }}" class="{% if request.endpoint == 'soporte.soporte' %}active{% endif %}"><i class="fas fa-headset"></i> Soporte</a>
+                    {% if session.rol == 'admin' %}
+                        <a href="{{ url_for('admin.administracion') }}" class="{% if request.endpoint.startswith('admin.') %}active{% endif %}"><i class="fas fa-cogs"></i> Administración</a>
+                    {% endif %}
+                    <a href="{{ url_for('auth.logout') }}"><i class="fas fa-sign-out-alt"></i> Salir</a>
+                    
+                    <a href="https://gemini.google.com/" target="_blank" class="nav-link">
+                        <i class="fas fa-robot"></i> Google Gemini
+                    </a>
+
+                {% endif %}
+            </nav>
+        </aside>
+
+        <!-- Overlay para móvil -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Botón toggle para móvil -->
+            <button class="sidebar-toggle" id="sidebarToggle" aria-label="Abrir menú">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <!-- Top Bar -->
+            <header class="top-bar">
+                <h1>{% block page_title %}Synapse Virtual IA{% endblock %}</h1>
+                <div class="user-info">
+                    <span>
+                        {% if session and session.id %}
+                            Bienvenido, {{ session.nombre }}
+                            <span class="role-badge">{{ session.rol }}</span>
+                        {% else %}
+                            Visitante
+                        {% endif %}
+                    </span>
+                    <div class="avatar-whatsapp">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for category, message in messages %}
+                            <div class="flash {{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <!-- Contenido específico de cada página -->
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Colegio Latinoamericano II · Synapse Virtual IA · Todos los derechos reservados</p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.getElementById('sidebar');
+            const toggleBtn = document.getElementById('sidebarToggle');
+            const overlay = document.getElementById('sidebarOverlay');
+
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', function() {
+                    sidebar.classList.toggle('open');
+                    if (overlay) overlay.classList.toggle('active');
+                    this.innerHTML = sidebar.classList.contains('open') ?
+                        '<i class="fas fa-times"></i>' :
+                        '<i class="fas fa-bars"></i>';
+                });
+            }
+            if (overlay) {
+                overlay.addEventListener('click', function() {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('active');
+                    if (toggleBtn) toggleBtn.innerHTML = '<i class="fas fa-bars"></i>';
+                });
+            }
+        });
+    </script>
+</body>
+</html>

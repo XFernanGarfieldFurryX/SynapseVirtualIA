@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Crear Usuario · Synapse Virtual IA{% endblock %}
+{% block page_title %}Crear Nuevo Usuario{% endblock %}
+
+{% block content %}
+    <div style="max-width: 600px; margin: 0 auto;">
+        <form method="POST" class="form-consulta">
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label style="color:#ffffff;">Nombre completo</label>
+                <input type="text" name="nombre" placeholder="Ej. Juan Pérez" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label style="color:#ffffff;">Correo electrónico</label>
+                <input type="email" name="correo" placeholder="ejemplo@synapse.edu" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label style="color:#ffffff;">Rol</label>
+                <select name="rol" class="form-control" required>
+                    <option value="admin">Administrador</option>
+                    <option value="profesor">Profesor</option>
+                    <option value="estudiante" selected>Estudiante</option>
+                    <option value="soporte">Soporte Técnico</option>
+                </select>
+            </div>
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label style="color:#ffffff;">Contraseña (mínimo 6 caracteres)</label>
+                <input type="password" name="password" placeholder="********" required minlength="6">
+            </div>
+            <button type="submit" class="btn-submit">Crear Usuario</button>
+            <a href="{{ url_for('admin.listar_usuarios') }}" class="btn-volver" style="margin-left:10px;">Cancelar</a>
+        </form>
+    </div>
+{% endblock %}

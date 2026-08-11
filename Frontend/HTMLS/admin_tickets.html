@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Gestionar Tickets · Synapse IA{% endblock %}
+{% block page_title %}🎫 Gestión de Tickets{% endblock %}
+
+{% block content %}
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Usuario</th>
+                    <th>Asunto</th>
+                    <th>Estado</th>
+                    <th>Fecha</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for t in tickets %}
+                <tr>
+                    <td>#{{ t.id }}</td>
+                    <td>{{ t.usuario_nombre }}</td>
+                    <td>{{ t.asunto }}</td>
+                    <td>
+                        <span class="status {{ t.estado }}">{{ t.estado }}</span>
+                    </td>
+                    <td>{{ t.fecha_creacion }}</td>
+                    <td>
+                        <!-- Selector de estado con estilo azul -->
+                        <form method="POST" action="{{ url_for('admin.actualizar_ticket', ticket_id=t.id) }}" style="display:inline-block; margin-right: 5px;">
+                            <select name="estado" onchange="this.form.submit()" style="background: #0b1b6d; color: white; border: 1px solid #00d4ff; border-radius: 30px; padding: 5px 12px;">
+                                <option value="abierto" {% if t.estado == 'abierto' %}selected{% endif %}>Abierto</option>
+                                <option value="en proceso" {% if t.estado == 'en proceso' %}selected{% endif %}>En proceso</option>
+                                <option value="cerrado" {% if t.estado == 'cerrado' %}selected{% endif %}>Cerrado</option>
+                            </select>
+                        </form>
+                        <!-- Botón Eliminar (rojo) -->
+                        <form method="POST" action="{{ url_for('admin.eliminar_ticket', ticket_id=t.id) }}" style="display:inline;" onsubmit="return confirm('¿Estás seguro de eliminar el ticket #{{ t.id }}?');">
+                            <button type="submit" class="btn-small" style="background: transparent; border: none; color: #dc3545; cursor: pointer; padding: 5px 8px;">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div style="text-align:center; margin-top:20px;">
+        <a href="{{ url_for('admin.administracion') }}" class="btn-volver">⬅ Volver al panel</a>
+    </div>
+{% endblock %}

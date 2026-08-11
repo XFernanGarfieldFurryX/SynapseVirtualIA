@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Calificaciones · Synapse Virtual IA{% endblock %}
+{% block page_title %}Calificaciones por Lapsos{% endblock %}
+
+{% block content %}
+    <div class="table-container">
+        {% if notas %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Materia</th>
+                    <th>Lapso</th>
+                    <th>Nota</th>
+                    <th>Observación</th>
+                    {% if session.rol != 'estudiante' %}
+                    <th>Estudiante</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for nota in notas %}
+                <tr>
+                    <td>{{ nota.materia_nombre }}</td>
+                    <td>{{ nota.lapso }}</td>
+                    <td>{{ nota.nota }}</td>
+                    <td>{{ nota.observacion or 'Sin observación' }}</td>
+                    {% if session.rol != 'estudiante' %}
+                    <td>{{ nota.estudiante_nombre }}</td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div style="padding:30px; text-align:center; color:#8a9bb5;">
+            <i class="fas fa-info-circle" style="font-size:2rem; color:#00d4ff; margin-bottom:10px;"></i>
+            <p>No hay calificaciones registradas para tu perfil.</p>
+        </div>
+        {% endif %}
+    </div>
+    <div style="text-align:center; margin-top:20px;">
+        <a href="{{ url_for('public.index') }}" class="btn-volver">🏠 Volver al Inicio</a>
+    </div>
+{% endblock %}

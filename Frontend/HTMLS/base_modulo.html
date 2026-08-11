@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Synapse Virtual IA · [Nombre del Módulo]</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+    <!-- ========== ENCABEZADO ========== -->
+    <header class="header">
+        <div class="logo">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Synapse Virtual IA" width="120">
+        </div>
+        <h1>🧠 Synapse Virtual IA</h1>
+        <p class="subtitulo">Plataforma Educativa Inteligente · Colegio Latinoamericano II</p>
+    </header>
+
+    <!-- ========== NAVEGACIÓN (Breadcrumb o menú superior) ========== -->
+    <nav class="nav-interna">
+        <!-- ✅ CORREGIDO: index → public.index -->
+        <a href="{{ url_for('public.index') }}">🏠 Inicio</a>
+        <span class="separador">|</span>
+        <span class="modulo-actual">[Nombre del Módulo]</span>
+        <!-- ✅ CORREGIDO: logout → auth.logout -->
+        <a href="{{ url_for('auth.logout') }}" class="cerrar-sesion">🔒 Cerrar sesión</a>
+    </nav>
+
+    <!-- ========== CONTENIDO PRINCIPAL ========== -->
+    <main class="contenido-modulo">
+        <h2>[Título del Módulo]</h2>
+        <p>[Descripción breve del módulo]</p>
+
+        <!-- Aquí va el contenido específico de cada página -->
+        <!-- Ejemplo: tabla de notas, lista de actividades, chat de IA, etc. -->
+        <div class="contenido-dinamico">
+            <!-- Contenido dinámico -->
+        </div>
+    </main>
+
+    <!-- ========== PIE DE PÁGINA ========== -->
+    <footer class="footer">
+        <hr>
+        <p>Colegio Latinoamericano II · Synapse Virtual IA · Todos los derechos reservados</p>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Auditoría · Synapse Virtual IA{% endblock %}
+{% block page_title %}📋 Registro de Auditoría{% endblock %}
+
+{% block content %}
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Usuario</th>
+                    <th>Rol</th>
+                    <th>Acción</th>
+                    <th>Módulo</th>
+                    <th>Fecha</th>
+                    <th>IP</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in registros %}
+                <tr>
+                    <td>{{ r.usuario }}</td>
+                    <td><span class="status {{ r.rol }}">{{ r.rol }}</span></td>
+                    <td>{{ r.accion }}</td>
+                    <td>{{ r.modulo }}</td>
+                    <td>{{ r.fecha }}</td>
+                    <td>{{ r.ip }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div style="text-align:center; margin-top:20px;">
+        <a href="{{ url_for('admin.administracion') }}" class="btn-volver">⬅ Volver al panel</a>
+    </div>
+{% endblock %}

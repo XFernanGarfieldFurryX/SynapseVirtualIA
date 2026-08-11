@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Profesores · Synapse Virtual IA{% endblock %}
+{% block page_title %}👨‍🏫 Panel del Docente{% endblock %}
+
+{% block content %}
+    <p style="color:#8a9bb5; margin-bottom:20px;">Realiza consultas sobre gestión de notas, materias, estudiantes y seguimiento académico.</p>
+
+    <!-- Accesos rápidos (botones azules) -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 25px;">
+        <!-- Botón "Registrar Notas" (ícono de lápiz) -->
+        <a href="{{ url_for('admin.crear_calificacion') }}" class="btn-submit" style="text-align: center; text-decoration: none; display: block; padding: 15px;">
+            <i class="fas fa-pen" style="font-size: 1.5rem; display: block; margin-bottom: 8px;"></i>
+            Registrar Notas
+        </a>
+        <a href="{{ url_for('estudiante.lapsos') }}" class="btn-submit" style="text-align: center; text-decoration: none; display: block; padding: 15px;">
+            <i class="fas fa-file-alt" style="font-size: 1.5rem; display: block; margin-bottom: 8px;"></i>
+            Ver Calificaciones
+        </a>
+        <a href="{{ url_for('estudiante.actividades') }}" class="btn-submit" style="text-align: center; text-decoration: none; display: block; padding: 15px;">
+            <i class="fas fa-tasks" style="font-size: 1.5rem; display: block; margin-bottom: 8px;"></i>
+            Ver Actividades
+        </a> 
+        <a href="{{ url_for('soporte.soporte') }}" class="btn-submit" style="text-align: center; text-decoration: none; display: block; padding: 15px;">
+            <i class="fas fa-headset" style="font-size: 1.5rem; display: block; margin-bottom: 8px;"></i>
+            Soporte Técnico
+        </a>
+        <a href="{{ url_for('public.index') }}" class="btn-submit" style="text-align: center; text-decoration: none; display: block; padding: 15px;">
+            <i class="fas fa-home" style="font-size: 1.5rem; display: block; margin-bottom: 8px;"></i>
+            Dashboard
+        </a>
+    </div>
+
+    <!-- Formulario de consulta -->
+    <form method="POST" class="form-consulta" id="consultaForm">
+        <input type="text" name="pregunta" id="preguntaInput" placeholder="Escriba su consulta docente" required>
+        <button type="submit" class="btn-submit">Consultar</button>
+    </form>
+
+    {% if respuesta %}
+        <div class="respuesta" style="margin-top:20px;">
+            <h3 style="color:#00d4ff;">📌 Respuesta:</h3>
+            <p style="color:#ffffff;">{{ respuesta }}</p>
+        </div>
+    {% endif %}
+
+    <!-- Ejemplos de consultas (clickeables) -->
+    <div style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap;">
+        <span class="status" style="cursor: pointer;" onclick="document.getElementById('preguntaInput').value='Registrar notas'; document.getElementById('consultaForm').submit();">
+            📝 Registrar notas
+        </span>
+        <span class="status" style="cursor: pointer;" onclick="document.getElementById('preguntaInput').value='Mis materias'; document.getElementById('consultaForm').submit();">
+            📚 Mis materias
+        </span>
+        <span class="status" style="cursor: pointer;" onclick="document.getElementById('preguntaInput').value='Rendimiento de estudiantes'; document.getElementById('consultaForm').submit();">
+            📊 Rendimiento de estudiantes
+        </span>
+        <span class="status" style="cursor: pointer;" onclick="document.getElementById('preguntaInput').value='Planificación de clases'; document.getElementById('consultaForm').submit();">
+            📋 Planificación de clases
+        </span>
+    </div>
+{% endblock %}

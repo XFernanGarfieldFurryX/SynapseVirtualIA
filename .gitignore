@@ -1,0 +1,24 @@
+# Secretos
+.env
+.env.local
+.env.production
+instance/
+*.db
+*.sqlite
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+
+# Sistema
+.DS_Store
+Thumbs.db
+.vscode/
+*.log
+
+fijar_claves.py
+ngrok.exe
+
+.git-HISTORIAL-ANTIGUO/

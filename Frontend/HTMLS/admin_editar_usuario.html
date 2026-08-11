@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Usuario · Synapse IA{% endblock %}
+{% block page_title %}✏️ Editar Usuario: {{ usuario.nombre }}{% endblock %}
+
+{% block content %}
+    <div class="stat-card" style="padding:25px;">
+        <form method="POST">
+            <div class="form-group" style="margin-bottom:15px;">
+                <label style="color:#ffffff; display:block; margin-bottom:5px;">Rol</label>
+                <select name="rol" class="form-control" style="width:100%; padding:12px; border-radius:30px; background:#1a1a2e; color:white; border:2px solid #1f4e79;">
+                    <option value="admin" {% if usuario.rol == 'admin' %}selected{% endif %}>Administrador</option>
+                    <option value="profesor" {% if usuario.rol == 'profesor' %}selected{% endif %}>Profesor</option>
+                    <option value="estudiante" {% if usuario.rol == 'estudiante' %}selected{% endif %}>Estudiante</option>
+                    <option value="soporte" {% if usuario.rol == 'soporte' %}selected{% endif %}>Soporte</option>
+                </select>
+            </div>
+            <div class="form-group" style="margin-bottom:20px;">
+                <label style="color:#ffffff; display:block; margin-bottom:5px;">
+                    <input type="checkbox" name="activo" {% if usuario.activo %}checked{% endif %}>
+                    Usuario activo
+                </label>
+            </div>
+            <button type="submit" class="btn-submit">💾 Guardar cambios</button>
+            <a href="{{ url_for('admin.listar_usuarios') }}" class="btn-volver" style="margin-left:10px;">Cancelar</a>
+        </form>
+    </div>
+{% endblock %}

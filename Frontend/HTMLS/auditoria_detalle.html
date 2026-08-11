@@ -1,0 +1,33 @@
+<div style="color: #fff;">
+    <h3 style="color: #00d4ff; margin-bottom: 15px;">Detalle de Auditoría #{{ registro.id }}</h3>
+    <p><strong style="color: #8a9bb5;">Usuario:</strong> {{ registro.usuario }}</p>
+    <p><strong style="color: #8a9bb5;">Rol:</strong> {{ registro.rol }}</p>
+    <p><strong style="color: #8a9bb5;">Acción:</strong> {{ registro.accion }}</p>
+    <p><strong style="color: #8a9bb5;">Módulo:</strong> {{ registro.modulo }}</p>
+    <p><strong style="color: #8a9bb5;">Fecha:</strong> {{ registro.fecha.strftime('%d/%m/%Y %H:%M:%S') if registro.fecha else '-' }}</p>
+    <p><strong style="color: #8a9bb5;">IP:</strong> {{ registro.ip or '-' }}</p>
+
+    {% if detalles %}
+    <h4 style="color: #00d4ff; margin: 20px 0 10px;">Cambios realizados:</h4>
+    <table style="width:100%; border-collapse: collapse; background: #1a1a2e; border-radius: 8px; overflow: hidden;">
+        <thead style="background: #0b1b6d;">
+            <tr>
+                <th style="padding: 8px 12px; text-align: left; color: #00d4ff;">Campo</th>
+                <th style="padding: 8px 12px; text-align: left; color: #00d4ff;">Valor anterior</th>
+                <th style="padding: 8px 12px; text-align: left; color: #00d4ff;">Valor nuevo</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for d in detalles %}
+            <tr>
+                <td style="padding: 8px 12px; border-bottom: 1px solid #1f4e79;">{{ d.campo }}</td>
+                <td style="padding: 8px 12px; border-bottom: 1px solid #1f4e79; color: #f0d080;">{{ d.valor_anterior or '-' }}</td>
+                <td style="padding: 8px 12px; border-bottom: 1px solid #1f4e79; color: #7ddf9a;">{{ d.valor_nuevo or '-' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="color: #8a9bb5; margin-top: 15px;">No hay detalles adicionales para este registro.</p>
+    {% endif %}
+</div>

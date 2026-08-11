@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Soporte · Synapse Virtual IA{% endblock %}
+{% block page_title %}Soporte Técnico{% endblock %}
+
+{% block content %}
+    <p style="color:#8a9bb5; margin-bottom:20px;">Reporta problemas técnicos, genera tickets de soporte y recibe asistencia.</p>
+
+    <form method="POST" class="form-consulta">
+        <input type="text" name="pregunta" placeholder="Describe el problema técnico que estás experimentando" required>
+        <button type="submit" class="btn-submit">Enviar reporte</button>
+    </form>
+
+    {% if respuesta %}
+        <div class="respuesta" style="margin-top:20px;">
+            <h3 style="color:#00d4ff;">📌 Respuesta del soporte:</h3>
+            <p style="color:#ffffff;">{{ respuesta }}</p>
+        </div>
+    {% endif %}
+
+    <h3 style="color:#ffffff; margin-top:30px;">📋 Mis Tickets</h3>
+    <div class="table-container">
+        {% if tickets %}
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Asunto</th>
+                    <th>Estado</th>
+                    <th>Fecha</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ticket in tickets %}
+                <tr>
+                    <td>#{{ ticket.id }}</td>
+                    <td>{{ ticket.asunto }}</td>
+                    <td><span class="status {{ ticket.estado }}">{{ ticket.estado }}</span></td>
+                    <td>{{ ticket.fecha_creacion }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div style="padding:20px; text-align:center; color:#8a9bb5;">No tienes tickets creados.</div>
+        {% endif %}
+    </div>
+
+    <div class="stat-card" style="margin-top:20px; padding:20px;">
+        <h3 style="color:#00d4ff;">📋 ¿Cómo funciona el soporte?</h3>
+        <ul style="list-style:none; padding:0; color:#8a9bb5;">
+            <li style="padding:5px 0;">🔹 Describe claramente el problema técnico.</li>
+            <li style="padding:5px 0;">🔹 Recibirás un ticket de seguimiento automático.</li>
+            <li style="padding:5px 0;">🔹 Nuestro equipo técnico responderá a la brevedad.</li>
+            <li style="padding:5px 0;">🔹 Puedes dar seguimiento a tu ticket desde este mismo módulo.</li>
+        </ul>
+        <p style="color:#f0c080; margin-top:10px;">⚠️ Para emergencias críticas, comunícate directamente con el departamento de TI.</p>
+    </div>
+{% endblock %}

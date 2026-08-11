@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Gestionar Usuarios · Synapse Virtual IA{% endblock %}
+{% block page_title %}👥 Gestión de Usuarios{% endblock %}
+
+{% block content %}
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+        <p style="color: #8a9bb5; margin: 0;">Lista de todos los usuarios registrados en el sistema.</p>
+        <a href="{{ url_for('admin.crear_usuario') }}" class="btn-submit" style="text-decoration: none; display: inline-block;">
+            <i class="fas fa-user-plus"></i> Crear Usuario
+        </a>
+    </div>
+
+    <div class="table-container">
+        {% if usuarios and usuarios|length > 0 %}
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Rol</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in usuarios %}
+                <tr>
+                    <td>{{ u.id }}</td> 
+                    <td>{{ u.nombre }}</td>
+                    <td>{{ u.correo }}</td>
+                    <td><span class="status {{ u.rol }}">{{ u.rol }}</span></td>
+                    <td>
+                        {% if u.activo %}
+                            <span class="status completed">Activo</span>
+                        {% else %}
+                            <span class="status rejected">Inactivo</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <!-- Botón Editar (azul consistente) -->
+                        <a href="{{ url_for('admin.editar_usuario', user_id=u.id) }}" 
+                           class="btn-small" 
+                           style="background: #0b1b6d; color: white; padding: 5px 12px; border-radius: 30px; text-decoration: none; display: inline-block; border: 1px solid #00d4ff; margin-right: 5px;">
+                            <i class="fas fa-edit"></i> Editar
+                        </a>
+                        <!-- Botón Eliminar (rojo) -->
+                        <form method="POST" action="{{ url_for('admin.eliminar_usuario', user_id=u.id) }}" style="display: inline;" onsubmit="return confirm('¿Estás seguro de eliminar este usuario?');">
+                            <button type="submit" class="btn-small" style="background: transparent; border: none; color: #dc3545; cursor: pointer; padding: 5px 8px;">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                        <!-- Botón Resetear contraseña (amarillo) -->
+                        <form method="POST" action="{{ url_for('admin.resetear_password', user_id=u.id) }}" style="display: inline;" onsubmit="return confirm('¿Resetear contraseña a 123456?');">
+                            <button type="submit" class="btn-small" style="background: transparent; border: none; color: #ffc107; cursor: pointer; padding: 5px 8px;" title="Resetear contraseña a 123456">
+                                <i class="fas fa-key"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div style="padding: 40px 30px; text-align: center; color: #8a9bb5; background: #0b1b6d; border-radius: 12px; border: 1px solid #00d4ff;">
+            <i class="fas fa-users" style="font-size: 3rem; color: #00d4ff; margin-bottom: 15px; display: block;"></i>
+            <p style="font-size: 1.1rem; color: #ffffff;">No hay usuarios registrados en el sistema.</p>
+            <p style="font-size: 0.9rem; margin-top: 8px;">Haz clic en <strong style="color: #00d4ff;">"Crear Usuario"</strong> para agregar el primer usuario.</p>
+        </div>
+        {% endif %}
+    </div>
+    
+    <div style="margin-top: 20px;">
+        <a href="{{ url_for('admin.administracion') }}" class="btn-volver">⬅ Volver al panel</a>
+    </div>
+{% endblock %}

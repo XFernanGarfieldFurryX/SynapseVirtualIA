@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Calificaciones · Synapse Virtual IA{% endblock %}
+{% block page_title %}📊 Gestión de Calificaciones{% endblock %}
+
+{% block content %}
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+        <p style="color: #8a9bb5; margin: 0;">Lista de todas las calificaciones registradas.</p>
+        <a href="{{ url_for('admin.crear_calificacion') }}" class="btn-submit" style="text-decoration: none; display: inline-block;">
+            <i class="fas fa-plus"></i> Nueva Calificación
+        </a>
+    </div>
+
+    <!-- Filtros -->
+    <form method="GET" style="display: flex; flex-wrap: wrap; gap: 10px; background: #0b1b6d; padding: 15px; border-radius: 12px; border: 1px solid #00d4ff; margin-bottom: 20px;">
+        <select name="estudiante_id" style="padding: 8px 12px; border-radius: 8px; background: #1a1a2e; color: #fff; border: 1px solid #1f4e79;">
+            <option value="">Todos los estudiantes</option>
+            {% for e in estudiantes %}
+                <option value="{{ e.id }}" {% if filtro_estudiante == e.id|string %}selected{% endif %}>{{ e.nombre }}</option>
+            {% endfor %}
+        </select>
+        <select name="materia_id" style="padding: 8px 12px; border-radius: 8px; background: #1a1a2e; color: #fff; border: 1px solid #1f4e79;">
+            <option value="">Todas las materias</option>
+            {% for m in materias %}
+                <option value="{{ m.id }}" {% if filtro_materia == m.id|string %}selected{% endif %}>{{ m.nombre }}</option>
+            {% endfor %}
+        </select>
+        <select name="lapso" style="padding: 8px 12px; border-radius: 8px; background: #1a1a2e; color: #fff; border: 1px solid #1f4e79;">
+            <option value="">Todos los lapsos</option>
+            {% for l in lapsos %}
+                <option value="{{ l }}" {% if filtro_lapso == l %}selected{% endif %}>{{ l }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn-submit" style="padding: 8px 20px;">Filtrar</button>
+        <a href="{{ url_for('admin.listar_calificaciones') }}" class="btn-volver" style="padding: 8px 20px;">Limpiar</a>
+    </form>
+
+    <div class="table-container">
+        {% if calificaciones %}
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Estudiante</th>
+                    <th>Materia</th>
+                    <th>Lapso</th>
+                    <th>Nota</th>
+                    <th>Observación</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in calificaciones %}
+                <tr>
+                    <td>{{ c.id }}</td>
+                    <td>{{ c.estudiante_nombre }}</td>
+                    <td>{{ c.materia_nombre }}</td>
+                    <td>{{ c.lapso }}</td>
+                    <td><strong>{{ c.nota }}</strong></td>
+                    <td>{{ c.observacion or '-' }}</td>
+                    <td>
+                        <a href="{{ url_for('admin.editar_calificacion', calificacion_id=c.id) }}" class="btn-small" style="background: #0b1b6d; color: white; padding: 5px 12px; border-radius: 30px; text-decoration: none; display: inline-block; border: 1px solid #00d4ff; margin-right: 5px;">
+                            <i class="fas fa-edit"></i> Editar
+                        </a>
+                        <form method="POST" action="{{ url_for('admin.eliminar_calificacion', calificacion_id=c.id) }}" style="display: inline;" onsubmit="return confirm('¿Estás seguro de eliminar esta calificación?');">
+                            <button type="submit" class="btn-small" style="background: transparent; border: none; color: #dc3545; cursor: pointer; padding: 5px 8px;">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div style="padding: 30px; text-align: center; color: #8a9bb5;">
+            <i class="fas fa-star" style="font-size: 2rem; color: #00d4ff; margin-bottom: 10px;"></i>
+            <p>No hay calificaciones registradas.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <div style="margin-top: 20px;">
+        <a href="{{ url_for('admin.administracion') }}" class="btn-volver">⬅ Volver al panel</a>
+    </div>
+{% endblock %}
