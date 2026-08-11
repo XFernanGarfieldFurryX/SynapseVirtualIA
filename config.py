@@ -11,16 +11,17 @@ from dotenv import load_dotenv
 # ============================================================
 # 1. LOCALIZAR Y CARGAR .env
 # ============================================================
-# Buscar .env en la raíz del proyecto
+# En desarrollo local se carga .env si existe.
+# En Render se utilizan las Environment Variables configuradas
+# directamente en el servicio.
+
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 
 if os.path.exists(dotenv_path):
     load_dotenv(dotenv_path)
     print(f"✅ .env cargado desde: {dotenv_path}")
 else:
-    print(f"❌ NO se encontró .env en: {dotenv_path}")
-    print("   Asegúrate de que el archivo .env esté en la raíz del proyecto.")
-    sys.exit(1)
+    print("ℹ️ .env no encontrado; usando variables de entorno del sistema.")
 
 # ============================================================
 # 2. CONFIGURACIÓN BASE
@@ -58,7 +59,8 @@ class Config:
     # IA
     GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
     DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "")
-    IA_PROVIDER = os.getenv("IA_PROVIDER", "gemini")
+    HUGGINGFACE_TOKEN = os.getenv("HUGGINGFACE_TOKEN", "")
+    IA_PROVIDER = os.getenv("IA_PROVIDER", "gemini") 
 
 # ============================================================
 # 3. CONFIGURACIONES POR ENTORNO
@@ -102,7 +104,7 @@ config = get_config()
 # ============================================================
 # 6. VERIFICACIÓN FINAL DE VARIABLES CRÍTICAS
 # ============================================================
-if __name__ == "__main__" or True:
+if __name__ == "__main__":
     print("\n" + "="*50)
     print("🔍 VERIFICACIÓN DE CONFIGURACIÓN")
     print("="*50)

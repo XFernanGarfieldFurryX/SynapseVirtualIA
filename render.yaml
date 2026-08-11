@@ -2,21 +2,64 @@ services:
   - type: web
     name: synapse-virtual-ia
     env: python
+
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn app:app
+
     envVars:
       - key: SECRET_KEY
-        value: SYNAPSE_VIRTUAL_IA_2026_SECRET_KEY
-      # Aquí van las variables exactas que lee tu app.py
+        generateValue: true
+
       - key: MYSQL_HOST
-        value: zephyr.proxy.rlwy.net
+        sync: false
+
       - key: MYSQL_PORT
-        value: "13458"
+        sync: false
+
       - key: MYSQL_USER
-        value: root
+        sync: false
+
       - key: MYSQL_PASSWORD
-        value: "BJmwBrWfHRhbddiUzsZFwUWFAxQEUDNO"
+        sync: false
+
       - key: MYSQL_DB
-        value: railway
+        sync: false
+
+      - key: MYSQL_CHARSET
+        value: utf8mb4
+
+      - key: MAIL_SERVER
+        sync: false
+
+      - key: MAIL_PORT
+        value: "587"
+
+      - key: MAIL_USE_TLS
+        value: "True"
+
+      - key: MAIL_USE_SSL
+        value: "False"
+
+      - key: MAIL_USERNAME
+        sync: false
+
+      - key: MAIL_PASSWORD
+        sync: false
+
+      - key: MAIL_DEFAULT_SENDER
+        sync: false
+
+      - key: GEMINI_API_KEY
+        sync: false
+
+      - key: HUGGINGFACE_TOKEN
+        sync: false
+
+      - key: DEEPSEEK_API_KEY
+        sync: false
+
+      - key: IA_PROVIDER
+        value: huggingface
+
       - key: PYTHON_VERSION
         value: 3.10.12

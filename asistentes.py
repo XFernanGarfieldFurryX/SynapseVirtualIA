@@ -188,7 +188,7 @@ def consultar_gemini(prompt: str) -> Optional[str]:
 
 def consultar_huggingface(prompt: str) -> Optional[str]:
     """Usa la API de Hugging Face con google/flan-t5-large."""
-    token = config.__dict__.get('HUGGINGFACE_TOKEN', '')
+    token = config.HUGGINGFACE_TOKEN
     if not token:
         logger.info("ℹ️ HUGGINGFACE_TOKEN no configurado.")
         return None
